@@ -40,9 +40,8 @@ class DirtyFieldsMixin(object):
             if field.primary_key and not include_primary_key:
                 continue
 
-            if remote_field(field):
-                if not check_relationship:
-                    continue
+            if not check_relationship and remote_field(field):
+                continue
 
             if is_deferred(self, field):
                 continue

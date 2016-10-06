@@ -15,14 +15,17 @@ def get_m2m_with_model(given_model):
         ]
 
 
-def is_db_expression(value):
-    try:
-        # django < 1.8
-        from django.db.models.expressions import ExpressionNode
+try:
+    # django < 1.8
+    from django.db.models.expressions import ExpressionNode
+
+    def is_db_expression(value):
         return isinstance(value, ExpressionNode)
-    except ImportError:
-        # django >= 1.8  (big refactoring in Lookup/Expressions/Transforms)
-        from django.db.models.expressions import BaseExpression, Combinable
+except ImportError:
+    # django >= 1.8  (big refactoring in Lookup/Expressions/Transforms)
+    from django.db.models.expressions import BaseExpression, Combinable
+
+    def is_db_expression(value):
         return isinstance(value, (BaseExpression, Combinable))
 
 
@@ -57,11 +60,14 @@ def save_specific_fields(instance, fields_list):
         signals.post_save.send(sender=instance.__class__, instance=instance)
 
 
+if sys.version_info < (3,0,0):
+    buffer_type = buffer
+else:
+    buffer_type = memoryview
+
+
 def is_buffer(value):
-    if sys.version_info < (3, 0, 0):
-        return isinstance(value, buffer)
-    else:
-        return isinstance(value, memoryview)
+    return isinstance(value, buffer_type)
 
 
 def remote_field(field):
