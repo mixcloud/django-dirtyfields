@@ -16,6 +16,8 @@ class DirtyFieldsMixin(object):
     # https://github.com/romgar/django-dirtyfields/issues/73
     ENABLE_M2M_CHECK = False
 
+    potential_dirty_fields = None
+
     def __init__(self, *args, **kwargs):
         super(DirtyFieldsMixin, self).__init__(*args, **kwargs)
         post_save.connect(
@@ -37,6 +39,9 @@ class DirtyFieldsMixin(object):
         all_field = {}
 
         for field in self._meta.fields:
+            if self.potential_dirty_fields and field.attname not in self.potential_dirty_fields:
+                continue
+
             if field.primary_key and not include_primary_key:
                 continue
 

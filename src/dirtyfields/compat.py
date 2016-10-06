@@ -30,11 +30,8 @@ except ImportError:
 
 
 def is_deferred(instance, field):
-    if django.VERSION < (1, 8):
-        attr = instance.__class__.__dict__.get(field.attname)
-        return isinstance(attr, DeferredAttribute)
-    else:
-        return field.get_attname() in instance.get_deferred_fields()
+    attr = instance.__class__.__dict__.get(field.attname)
+    return isinstance(attr, DeferredAttribute)
 
 
 def save_specific_fields(instance, fields_list):
