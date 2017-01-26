@@ -129,7 +129,8 @@ def reset_state(sender, instance, **kwargs):
     new_state = instance._as_dict(check_relationship=True)
     if update_fields:
         for field in update_fields:
-            instance._original_state[field] = new_state[field]
+            if field in new_state:
+                instance._original_state[field] = new_state[field]
     else:
         instance._original_state = new_state
     if instance.ENABLE_M2M_CHECK:
